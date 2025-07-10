@@ -1,4 +1,3 @@
-#include "includes/models/token.h"
 #include "scanner.h"
 #include <chrono>
 #include <exception>
@@ -30,7 +29,8 @@ void runFile(std::string path) {
 }
 
 int main() {
-  std::chrono::time_point<std::chrono::steady_clock> start {std::chrono::steady_clock::now()};
+  std::chrono::time_point<std::chrono::steady_clock> start{
+      std::chrono::steady_clock::now()};
 
   std::string path{"D:\\school\\coding\\self_learning\\test_files\\test.txt"};
   try {
@@ -39,7 +39,8 @@ int main() {
     std::cout << e.what();
   }
 
-  std::chrono::time_point<std::chrono::steady_clock> end {std::chrono::steady_clock::now()};
+  std::chrono::time_point<std::chrono::steady_clock> end{
+      std::chrono::steady_clock::now()};
   std::cout << std::chrono::duration<double>{end - start};
   return 0;
 }

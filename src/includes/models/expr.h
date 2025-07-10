@@ -1,4 +1,8 @@
 #pragma once
+#include "interfaces/ivisitor.h"
 
-// Base class for all types of expression
-class Expr {};
+class Expr {
+public:
+  virtual ~Expr() = default;
+  virtual void accept(IVisitor *visitor) = 0;
+};
