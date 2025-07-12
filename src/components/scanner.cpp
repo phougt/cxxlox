@@ -29,7 +29,7 @@ Scanner::Scanner(std::string &source) : source(source) {
   keywords.insert({"while", TokenKind::WHILE});
 }
 
-std::vector<Token> Scanner::getTokens() {
+std::vector<Token>&& Scanner::getTokens() {
   tokens = std::vector<Token>{};
 
   while (!isEOF()) {

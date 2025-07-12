@@ -11,7 +11,7 @@ public:
   Scanner();
   Scanner(std::string &source);
   ~Scanner();
-  std::vector<Token> getTokens();
+  std::vector<Token>&& getTokens();
   std::string source;
 
 private:
