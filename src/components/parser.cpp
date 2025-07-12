@@ -7,7 +7,7 @@
 #include <memory>
 
 Parser::Parser() {}
-Parser::Parser(std::vector<Token> &tokens) : tokens{std::move(tokens)} {}
+Parser::Parser(std::vector<Token> &&tokens) : tokens{std::move(tokens)} {}
 
 std::unique_ptr<Expr> Parser::parse() {
   try {

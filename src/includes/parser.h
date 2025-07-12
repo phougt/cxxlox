@@ -10,7 +10,7 @@
 class Parser {
 public:
   Parser();
-  Parser(std::vector<Token> &tokens);
+  Parser(std::vector<Token>&& tokens);
   std::unique_ptr<Expr> parse();
 
 private:
