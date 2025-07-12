@@ -14,7 +14,7 @@ bool hasError = false;
 void run(std::string source) {
   Scanner scanner{source};
   std::vector<Token> tokens{scanner.getTokens()};
-  Parser parser{tokens};
+  Parser parser{std::move(tokens)};
   auto expr{parser.parse()};
 
   if (hasError) {
@@ -29,6 +29,7 @@ void runFile(std::string path) {
 
   if (!file.is_open()) {
     std::cerr << "[Error]: Input path can not be opened.";
+    return;
   }
 
   std::stringstream sourceStream{};
