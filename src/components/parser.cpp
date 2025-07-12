@@ -46,7 +46,7 @@ bool Parser::isEOF() {
   return false;
 }
 
-ParserException Parser::reportAndCreateError(std::string reason, Token token) {
+ParserException Parser::reportAndCreateError(std::string reason, const Token& token) {
   error::reportError(reason, token);
   return ParserException();
 }

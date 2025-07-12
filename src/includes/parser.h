@@ -7,7 +7,6 @@
 #include <memory>
 #include <vector>
 
-
 class Parser {
 public:
   Parser();
@@ -20,7 +19,7 @@ private:
   bool advanceIfExpect(TokenKind kind);
   void throwOrAdvanceIfExpect(TokenKind kind, std::string reason);
   bool isEOF();
-  ParserException reportAndCreateError(std::string, Token);
+  ParserException reportAndCreateError(std::string, const Token &);
   std::unique_ptr<Expr> expression();
   std::unique_ptr<Expr> equality();
   std::unique_ptr<Expr> comparison();
