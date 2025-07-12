@@ -11,6 +11,7 @@ class Parser {
 public:
   Parser();
   Parser(std::vector<Token> &tokens);
+  std::unique_ptr<Expr> parse();
 
 private:
   const Token &peek(int count = 1);
@@ -29,5 +30,5 @@ private:
   std::unique_ptr<Expr> primary();
 
   std::vector<Token> tokens;
-  size_t current;
+  size_t current{0};
 };
