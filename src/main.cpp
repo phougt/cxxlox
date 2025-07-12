@@ -32,7 +32,7 @@ int main() {
   std::chrono::time_point<std::chrono::steady_clock> start{
       std::chrono::steady_clock::now()};
 
-  std::string path{"D:\\school\\coding\\self_learning\\test_files\\test.txt"};
+  std::string path{""};
   try {
     runFile(path);
   } catch (std::exception e) {
