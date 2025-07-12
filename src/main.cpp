@@ -1,3 +1,4 @@
+#include "parser.h"
 #include "scanner.h"
 #include <chrono>
 #include <exception>
@@ -13,6 +14,13 @@ bool hasError = false;
 void run(std::string source) {
   Scanner scanner{source};
   std::vector<Token> tokens{scanner.getTokens()};
+  Parser parser{tokens};
+  auto expr{parser.parse()};
+
+  if (hasError) {
+    std::cout << "Parser error occurred. Exiting program.";
+    return;
+  }
 }
 
 void runFile(std::string path) {

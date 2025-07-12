@@ -9,6 +9,14 @@
 Parser::Parser() {}
 Parser::Parser(std::vector<Token> &tokens) : tokens{std::move(tokens)} {}
 
+std::unique_ptr<Expr> Parser::parse() {
+  try {
+    return expression();
+  } catch (ParserException &e) {
+    return nullptr;
+  }
+}
+
 bool Parser::expect(TokenKind kind) {
   if (peek().kind == kind) {
     return true;
@@ -46,7 +54,8 @@ bool Parser::isEOF() {
   return false;
 }
 
-ParserException Parser::reportAndCreateError(std::string reason, const Token& token) {
+ParserException Parser::reportAndCreateError(std::string reason,
+                                             const Token &token) {
   error::reportError(reason, token);
   return ParserException();
 }
@@ -62,7 +71,7 @@ void Parser::throwOrAdvanceIfExpect(TokenKind kind, std::string reasonToThrow) {
 std::unique_ptr<Expr> Parser::expression() { return equality(); }
 
 std::unique_ptr<Expr> Parser::equality() {
-  auto tempExpr{std::move(comparison())};
+  auto tempExpr{comparison()};
 
   while (expect(TokenKind::BANG_EQUAL) || expect(TokenKind::EQUAL_EQUAL)) {
     const Token &op = advance();
@@ -75,7 +84,7 @@ std::unique_ptr<Expr> Parser::equality() {
 }
 
 std::unique_ptr<Expr> Parser::comparison() {
-  auto tempExpr{std::move(term())};
+  auto tempExpr{term()};
 
   while (expect(TokenKind::GREATER) || expect(TokenKind::GREATER_EQUAL) ||
          expect(TokenKind::LESS) || expect(TokenKind::LESS_EQUAL)) {
@@ -89,7 +98,7 @@ std::unique_ptr<Expr> Parser::comparison() {
 }
 
 std::unique_ptr<Expr> Parser::term() {
-  auto tempExpr{std::move(factor())};
+  auto tempExpr{factor()};
 
   while (expect(TokenKind::MINUS) || expect(TokenKind::PLUS)) {
     const Token &op = advance();
@@ -102,7 +111,7 @@ std::unique_ptr<Expr> Parser::term() {
 }
 
 std::unique_ptr<Expr> Parser::factor() {
-  auto tempExpr{std::move(unary())};
+  auto tempExpr{unary()};
 
   while (expect(TokenKind::SLASH) || expect(TokenKind::STAR)) {
     const Token &op = advance();
@@ -121,7 +130,7 @@ std::unique_ptr<Expr> Parser::unary() {
     return std::make_unique<UnaryExpr>(op, std::move(expr));
   }
 
-  auto tempExpr{std::move(primary())};
+  auto tempExpr{primary()};
   return tempExpr;
 }
 
@@ -141,6 +150,5 @@ std::unique_ptr<Expr> Parser::primary() {
     return expr;
   }
 
-  // temporary return to avoid compilation error, might change it later.
-  return std::make_unique<LiteralExpr>(Token(TokenKind::EOF_TOKEN));
+  throw reportAndCreateError("Expected expression.", peek());
 }
