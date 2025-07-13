@@ -1,4 +1,7 @@
 #pragma once
+#include <string>
+#include <variant>
+
 
 class BinaryExpr;
 class UnaryExpr;
@@ -7,8 +10,8 @@ class GroupingExpr;
 
 class IVisitor {
 public:
-  virtual void visit(const BinaryExpr *expr) = 0;
-  virtual void visit(const UnaryExpr *expr) = 0;
-  virtual void visit(const LiteralExpr *expr) = 0;
-  virtual void visit(const GroupingExpr *expr) = 0;
+  virtual std::variant<std::string, double> visit(const BinaryExpr *expr) = 0;
+  virtual std::variant<std::string, double> visit(const UnaryExpr *expr) = 0;
+  virtual std::variant<std::string, double> visit(const LiteralExpr *expr) = 0;
+  virtual std::variant<std::string, double> visit(const GroupingExpr *expr) = 0;
 };
