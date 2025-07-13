@@ -10,7 +10,7 @@
 Scanner::Scanner() {}
 Scanner::~Scanner() {}
 
-Scanner::Scanner(std::string &source) : source(source) {
+Scanner::Scanner(std::string &&source) : source(std::move(source)) {
   keywords.insert({"and", TokenKind::AND});
   keywords.insert({"class", TokenKind::CLASS});
   keywords.insert({"else", TokenKind::ELSE});

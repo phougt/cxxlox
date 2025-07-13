@@ -11,9 +11,15 @@
 
 bool hasError = false;
 
-void run(std::string source) {
-  Scanner scanner{source};
+void run(std::string&& source) {
+  Scanner scanner{std::move(source)};
   std::vector<Token> tokens{scanner.getTokens()};
+
+  if (hasError) {
+    std::cout << "Scanner error occurred. Exiting program.";
+    return;
+  }
+
   Parser parser{std::move(tokens)};
   auto expr{parser.parse()};
 

@@ -9,12 +9,11 @@
 class Scanner {
 public:
   Scanner();
-  Scanner(std::string &source);
+  Scanner(std::string &&source);
   ~Scanner();
   std::vector<Token>&& getTokens();
-  std::string source;
-
-private:
+  
+  private:
   bool isEOF();
   char peek(int count = 1);
   char advance();
@@ -25,9 +24,10 @@ private:
   void appendToken(TokenKind, double);
   void appendToken(TokenKind, std::string);
   void appendToken(TokenKind);
-
+  
   size_t current{0};
   size_t line{1};
   std::vector<Token> tokens;
   std::map<std::string, TokenKind> keywords;
+  std::string source;
 };
