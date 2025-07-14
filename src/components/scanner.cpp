@@ -29,7 +29,7 @@ Scanner::Scanner(std::string &&source) : source(std::move(source)) {
   keywords.insert({"while", TokenKind::WHILE});
 }
 
-std::vector<Token>&& Scanner::getTokens() {
+std::vector<Token> &&Scanner::getTokens() {
   tokens = std::vector<Token>{};
 
   while (!isEOF()) {
@@ -173,7 +173,7 @@ void Scanner::scanNumber() {
     }
   }
 
-  appendToken(TokenKind::NUMBER, std::stoi(number));
+  appendToken(TokenKind::NUMBER, std::stod(number));
 }
 
 void Scanner::scanStringLiteral() {
