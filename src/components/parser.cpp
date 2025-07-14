@@ -146,9 +146,9 @@ std::unique_ptr<Expr> Parser::primary() {
     advance();
     auto expr{expression()};
     throwOrAdvanceIfExpect(TokenKind::RIGHT_PAREN,
-                           "Expected ')' after expression.");
+                           "Expected ')' after expression");
     return expr;
   }
 
-  throw reportAndCreateError("Expected expression.", peek());
+  throw reportAndCreateError("Expected expression", peek());
 }

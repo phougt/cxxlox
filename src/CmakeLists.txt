@@ -12,6 +12,7 @@ set(source_files_to_be_built
     components/scanner.cpp
     components/helper.cpp
     components/parser.cpp
+    components/interpreter.cpp
 )
 
 add_executable(jlox ${source_files_to_be_built})

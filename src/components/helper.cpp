@@ -6,11 +6,12 @@
 namespace error {
 void reportError(std::string reason, size_t line) {
   hasError = true;
-  std::cerr << std::format("[Error]:{}. {}", line, reason);
+  std::cerr << std::format("[Error]:Line {}. {}", line, reason);
 }
 
 void reportError(std::string reason, const Token &token) {
   switch (token.kind) {
+  case TokenKind::IDENTIFIER:
   case TokenKind::STRING:
     reportError(std::format("{}, found '{}'", reason,
                             std::get<std::string>(token.literal)),
@@ -29,10 +30,16 @@ void reportError(std::string reason, const Token &token) {
   }
 }
 
+void reportRuntimeError(RuntimeException e) {
+  hasRuntimeError = true;
+  std::cerr << std::format("[Runtime Error]:Line {}. {}", e.token.line,
+                           e.message);
+};
+
 void reportWarning(std::string reason, size_t line) {
-  std::cerr << std::format("[Warning]: {} on line {}.", reason, line);
+  std::cerr << std::format("[Warning]:Line {}. {}.", reason, line);
 }
-}
+} // namespace error
 
 std::string tokenKindToStr(TokenKind kind) {
   switch (kind) {

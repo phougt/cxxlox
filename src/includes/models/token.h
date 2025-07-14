@@ -1,10 +1,9 @@
 #pragma once
+#include "common.h"
 #include <enums/token_kind.h>
-#include <string>
-#include <variant>
 
 struct Token {
   TokenKind kind;
-  std::variant<double, std::string> literal;
+  LoxValue literal;
   size_t line;
 };
