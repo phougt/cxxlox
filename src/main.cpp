@@ -1,7 +1,6 @@
 #include "includes/interpreter.h"
 #include "parser.h"
 #include "scanner.h"
-#include <chrono>
 #include <exception>
 #include <fstream>
 #include <ios>
@@ -49,19 +48,38 @@ void runFile(std::string path) {
     exit(20);
 }
 
-int main() {
-  std::chrono::time_point<std::chrono::steady_clock> start{
-      std::chrono::steady_clock::now()};
+void runREPL() {
+  std::string line;
+  Interpreter interpreter;
 
-  std::string path{"D:\\school\\coding\\self_learning\\test_files\\test.txt"};
-  try {
-    runFile(path);
-  } catch (std::exception e) {
-    std::cout << e.what();
+  while (true) {
+    std::cout << "> ";
+    std::getline(std::cin, line);
+
+    if (line.empty())
+      continue;
+
+    if (line == "exit" || line == "quit")
+      break;
+
+    run(std::move(line));
+    hasError = false;
+    hasRuntimeError = false;
+  }
+}
+
+int main(int argc, char *argv[]) {
+  if (argc == 1) {
+    runREPL();
+  } else if (argc == 2) {
+    try {
+      std::string path{argv[1]};
+      runFile(path);
+    } catch (std::exception &e) {
+      std::cerr << "[Error]: " << e.what() << std::endl;
+      return 1;
+    }
   }
 
-  std::chrono::time_point<std::chrono::steady_clock> end{
-      std::chrono::steady_clock::now()};
-  std::cout << std::chrono::duration<double>{end - start};
   return 0;
 }
