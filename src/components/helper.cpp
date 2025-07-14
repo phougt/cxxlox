@@ -6,7 +6,7 @@
 namespace error {
 void reportError(std::string reason, size_t line) {
   hasError = true;
-  std::cerr << std::format("[Error]:Line {}. {}", line, reason);
+  std::cerr << std::format("[Error]:Line {}. {}\n", line, reason);
 }
 
 void reportError(std::string reason, const Token &token) {
@@ -32,12 +32,12 @@ void reportError(std::string reason, const Token &token) {
 
 void reportRuntimeError(RuntimeException e) {
   hasRuntimeError = true;
-  std::cerr << std::format("[Runtime Error]:Line {}. {}", e.token.line,
+  std::cerr << std::format("[Runtime Error]:Line {}. {}\n", e.token.line,
                            e.message);
 };
 
 void reportWarning(std::string reason, size_t line) {
-  std::cerr << std::format("[Warning]:Line {}. {}.", reason, line);
+  std::cerr << std::format("[Warning]:Line {}. {}.\n", reason, line);
 }
 } // namespace error
 

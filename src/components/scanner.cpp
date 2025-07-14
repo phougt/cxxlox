@@ -152,7 +152,7 @@ void Scanner::scanToken() {
     } else if (std::isalpha(temp) || std::isdigit(temp) || temp == '_') {
       scanIdentifierAndKeyword();
     } else {
-      error::reportError(std::format("Illegal char ({}) found", temp), line);
+      error::reportError(std::format("Illegal char {} found", temp), line);
       advance();
     }
     break;
