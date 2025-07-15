@@ -2,15 +2,15 @@
 #include "common.h"
 #include "interfaces/i_expr_visitor.h"
 #include "models/expr.h"
-#include <memory>
+#include "models/token.h"
 
-class GroupingExpr : public Expr {
+class VariableExpr : public Expr {
 public:
-  GroupingExpr(std::unique_ptr<Expr> expr) : expr{std::move(expr)} {}
+  VariableExpr(Token name) : name{name} {}
 
   LoxValue accept(IExprVisitor &visitor) const override {
     return visitor.visit(*this);
   };
 
-  std::unique_ptr<Expr> expr;
+  Token name;
 };

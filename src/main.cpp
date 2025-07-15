@@ -11,6 +11,7 @@
 
 bool hasError = false;
 bool hasRuntimeError = false;
+Interpreter interpreter{};
 
 void run(std::string &&source) {
   Scanner scanner{std::move(source)};
@@ -20,13 +21,12 @@ void run(std::string &&source) {
     return;
 
   Parser parser{std::move(tokens)};
-  auto expr{parser.parse()};
+  auto statements{parser.parse()};
 
   if (hasError)
     return;
 
-  Interpreter interpreter;
-  interpreter.interpret(*expr.get());
+  interpreter.interpret(statements);
 }
 
 void runFile(std::string path) {

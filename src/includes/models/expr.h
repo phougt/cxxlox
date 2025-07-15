@@ -1,9 +1,9 @@
 #pragma once
 #include "common.h"
-#include "interfaces/ivisitor.h"
+#include "interfaces/i_expr_visitor.h"
 
 class Expr {
 public:
   virtual ~Expr() = default;
-  virtual LoxValue accept(const IVisitor &visitor) const = 0;
+  virtual LoxValue accept(IExprVisitor &visitor) const = 0;
 };

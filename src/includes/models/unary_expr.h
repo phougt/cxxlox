@@ -1,6 +1,6 @@
 #pragma once
 #include "common.h"
-#include "interfaces/ivisitor.h"
+#include "interfaces/i_expr_visitor.h"
 #include "models/expr.h"
 #include "token.h"
 #include <memory>
@@ -10,7 +10,7 @@ public:
   UnaryExpr(Token op, std::unique_ptr<Expr> expr)
       : op{op}, expr{std::move(expr)} {}
 
-  LoxValue accept(const IVisitor &visitor) const override {
+  LoxValue accept(IExprVisitor &visitor) const override {
     return visitor.visit(*this);
   }
 
