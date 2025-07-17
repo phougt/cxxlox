@@ -207,5 +207,6 @@ LoxValue Interpreter::visit(const AssignmentExpr &expr) {
                            std::format("Undefined variable '{}'", varName));
   }
 
+  symbolTable.insert_or_assign(varName, value);
   return value;
 }
