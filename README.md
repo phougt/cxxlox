@@ -12,7 +12,7 @@ Implementation of the interpreter in the book was implemented using Java, but I 
 ## Project Structure
 
 ```
-jlox/
+cxxlox/
 ├── src/
 │   ├── CMakeLists.txt
 │   ├── includes/
@@ -35,8 +35,8 @@ Follow these steps to build the jlox project:
    First, clone the repository to your local machine:
 
    ```bash
-   git clone https://github.com/phougt/jlox.git
-   cd jlox
+   git clone https://github.com/phougt/cxxlox.git
+   cd cxxlox
    ```
 
 2. **Create a Build Directory**
@@ -73,5 +73,5 @@ Follow these steps to build the jlox project:
    ```
 5. **Run the executable**
    ```bash
-   ./jlox
+   ./cxxlox
    ```
