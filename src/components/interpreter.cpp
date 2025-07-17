@@ -13,6 +13,7 @@
 #include "models/statement.h"
 #include "models/token.h"
 #include "models/unary_expr.h"
+#include <format>
 #include <iostream>
 #include <memory>
 #include <variant>
@@ -195,4 +196,16 @@ void Interpreter::visit(const VarStatement &statement) {
   }
 
   symbolTable.insert_or_assign(varName, value);
+}
+
+LoxValue Interpreter::visit(const AssignmentExpr &expr) {
+  auto value = evaluate(*expr.value);
+  std::string varName = std::get<std::string>(expr.name.literal);
+
+  if (!symbolTable.contains(varName)) {
+    throw RuntimeException(expr.name,
+                           std::format("Undefined variable '{}'", varName));
+  }
+
+  return value;
 }

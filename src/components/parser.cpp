@@ -1,6 +1,8 @@
 #include "parser.h"
 #include "enums/token_kind.h"
+#include "exceptions/parser_exception.h"
 #include "helper.h"
+#include "models/assignment_expr.h"
 #include "models/binary_expr.h"
 #include "models/expr_statement.h"
 #include "models/literal_expr.h"
@@ -10,19 +12,14 @@
 #include "models/variable_expr.h"
 #include <memory>
 
-
 Parser::Parser() {}
 Parser::Parser(std::vector<Token> &&tokens) : tokens{std::move(tokens)} {}
 
 std::vector<std::unique_ptr<Statement>> Parser::parse() {
   std::vector<std::unique_ptr<Statement>> statements{};
 
-  try {
-    while (!isEOF()) {
-      statements.push_back(declaration());
-    }
-  } catch (ParserException &e) {
-    return {};
+  while (!isEOF()) {
+    statements.push_back(declaration());
   }
 
   return std::move(statements);
@@ -80,7 +77,7 @@ const Token &Parser::throwOrAdvanceIfExpect(TokenKind kind,
   }
 }
 
-std::unique_ptr<Expr> Parser::expression() { return equality(); }
+std::unique_ptr<Expr> Parser::expression() { return assignment(); }
 
 std::unique_ptr<Expr> Parser::equality() {
   auto tempExpr{comparison()};
@@ -90,6 +87,25 @@ std::unique_ptr<Expr> Parser::equality() {
     auto expr{comparison()};
     tempExpr =
         std::make_unique<BinaryExpr>(op, std::move(tempExpr), std::move(expr));
+  }
+
+  return tempExpr;
+}
+
+std::unique_ptr<Expr> Parser::assignment() {
+  const Token &tempToken = peek();
+  auto tempExpr{equality()};
+
+  if (advanceIfExpect(TokenKind::EQUAL)) {
+    auto rightHandSideExpr{assignment()};
+    const VariableExpr *variableExpr =
+        dynamic_cast<VariableExpr *>(tempExpr.get());
+
+    if (variableExpr != nullptr) {
+      return std::make_unique<AssignmentExpr>(variableExpr->name,
+                                              std::move(rightHandSideExpr));
+    }
+    throw reportAndCreateError("Expected variable name", tempToken);
   }
 
   return tempExpr;
@@ -191,12 +207,17 @@ std::unique_ptr<Statement> Parser::printStatement() {
 }
 
 std::unique_ptr<Statement> Parser::declaration() {
-  if (expect(TokenKind::VAR)) {
-    advance();
-    return varDeclaration();
-  }
+  try {
+    if (expect(TokenKind::VAR)) {
+      advance();
+      return varDeclaration();
+    }
 
-  return statement();
+    return statement();
+  } catch (ParserException &e) {
+    synchronize();
+    return nullptr;
+  }
 }
 
 std::unique_ptr<Statement> Parser::varDeclaration() {
@@ -211,4 +232,23 @@ std::unique_ptr<Statement> Parser::varDeclaration() {
   throwOrAdvanceIfExpect(TokenKind::SEMICOLON,
                          "Expected ';' after variable declaration");
   return std::make_unique<VarStatement>(name, std::move(initializer));
+}
+
+void Parser::synchronize() {
+  Token temp = advance();
+  while (temp.kind != TokenKind::EOF_TOKEN) {
+    switch (temp.kind) {
+    case TokenKind::SEMICOLON:
+    case TokenKind::CLASS:
+    case TokenKind::FUN:
+    case TokenKind::VAR:
+    case TokenKind::FOR:
+    case TokenKind::IF:
+    case TokenKind::WHILE:
+    case TokenKind::PRINT:
+    case TokenKind::RETURN:
+      return;
+    }
+    temp = advance();
+  }
 }

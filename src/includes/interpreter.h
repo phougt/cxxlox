@@ -2,6 +2,7 @@
 #include "common.h"
 #include "interfaces/i_expr_visitor.h"
 #include "interfaces/i_statement_visitor.h"
+#include "models/assignment_expr.h"
 #include "models/expr.h"
 #include "models/statement.h"
 #include "models/var_statement.h"
@@ -27,6 +28,7 @@ private:
   LoxValue visit(const LiteralExpr &expr) override;
   LoxValue visit(const GroupingExpr &expr) override;
   LoxValue visit(const VariableExpr &expr) override;
+  LoxValue visit(const AssignmentExpr &expr) override;
   void visit(const ExprStatement &statement) override;
   void visit(const PrintStatement &statement) override;
   void visit(const VarStatement &statement) override;

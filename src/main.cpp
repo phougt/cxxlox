@@ -50,7 +50,6 @@ void runFile(std::string path) {
 
 void runREPL() {
   std::string line;
-  Interpreter interpreter;
 
   while (true) {
     std::cout << "> ";

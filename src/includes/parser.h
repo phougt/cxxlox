@@ -21,6 +21,7 @@ private:
   bool advanceIfExpect(TokenKind kind);
   const Token &throwOrAdvanceIfExpect(TokenKind kind, std::string reason);
   bool isEOF();
+  void synchronize();
   ParserException reportAndCreateError(std::string, const Token &);
   std::unique_ptr<Statement> declaration();
   std::unique_ptr<Statement> varDeclaration();
@@ -28,6 +29,7 @@ private:
   std::unique_ptr<Statement> exprStatement();
   std::unique_ptr<Statement> printStatement();
   std::unique_ptr<Expr> expression();
+  std::unique_ptr<Expr> assignment();
   std::unique_ptr<Expr> equality();
   std::unique_ptr<Expr> comparison();
   std::unique_ptr<Expr> term();
