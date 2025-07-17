@@ -1,6 +1,6 @@
-# jlox
+# cxxlox
 
-Based off the book, Crafting Interpreters by Bob Nystrom, jlox is an interpreter for the Lox language.
+Based off the book, Crafting Interpreters by Bob Nystrom, cxxlox is an interpreter for the Lox language.
 
 Implementation of the interpreter in the book was implemented using Java, but I decided to implement it using C++ instead.
 
