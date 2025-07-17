@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.20)
-project(jlox VERSION 1.0 LANGUAGES CXX)
+project(cxxlox VERSION 1.0 LANGUAGES CXX)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_CXX_STANDARD 20)
@@ -15,5 +15,5 @@ set(source_files_to_be_built
     components/interpreter.cpp
 )
 
-add_executable(jlox ${source_files_to_be_built})
-target_include_directories(jlox PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/includes)
+add_executable(cxxlox ${source_files_to_be_built})
+target_include_directories(cxxlox PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/includes)
