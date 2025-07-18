@@ -13,6 +13,7 @@ set(source_files_to_be_built
     components/helper.cpp
     components/parser.cpp
     components/interpreter.cpp
+    components/symbol_table.cpp
 )
 
 add_executable(cxxlox ${source_files_to_be_built})

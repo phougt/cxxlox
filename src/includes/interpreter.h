@@ -3,17 +3,18 @@
 #include "interfaces/i_expr_visitor.h"
 #include "interfaces/i_statement_visitor.h"
 #include "models/assignment_expr.h"
+#include "models/block_statement.h"
 #include "models/expr.h"
 #include "models/statement.h"
 #include "models/var_statement.h"
 #include "models/variable_expr.h"
-#include <map>
+#include "symbol_table.h"
 #include <memory>
 #include <vector>
 
 class Interpreter : public IExprVisitor, IStatementVisitor {
 public:
-  Interpreter() = default;
+  Interpreter();
   ~Interpreter() = default;
   void interpret(const std::vector<std::unique_ptr<Statement>> &);
 
@@ -32,6 +33,7 @@ private:
   void visit(const ExprStatement &statement) override;
   void visit(const PrintStatement &statement) override;
   void visit(const VarStatement &statement) override;
+  void visit(const BlockStatement &statement) override;
 
-  std::map<std::string, LoxValue> symbolTable;
+  std::unique_ptr<SymbolTable> symbolTable;
 };

@@ -4,9 +4,11 @@
 #include "helper.h"
 #include "models/assignment_expr.h"
 #include "models/binary_expr.h"
+#include "models/block_statement.h"
 #include "models/expr_statement.h"
 #include "models/literal_expr.h"
 #include "models/print_statement.h"
+#include "models/statement.h"
 #include "models/unary_expr.h"
 #include "models/var_statement.h"
 #include "models/variable_expr.h"
@@ -186,9 +188,10 @@ std::unique_ptr<Expr> Parser::primary() {
 }
 
 std::unique_ptr<Statement> Parser::statement() {
-  if (expect(TokenKind::PRINT)) {
-    advance();
+  if (advanceIfExpect(TokenKind::PRINT)) {
     return printStatement();
+  } else if (advanceIfExpect(TokenKind::LEFT_BRACE)) {
+    return blockStatement();
   } else {
     return exprStatement();
   }
@@ -204,6 +207,17 @@ std::unique_ptr<Statement> Parser::printStatement() {
   auto expr{expression()};
   throwOrAdvanceIfExpect(TokenKind::SEMICOLON, "Expected ';' after expression");
   return std::make_unique<PrintStatement>(std::move(expr));
+}
+
+std::unique_ptr<Statement> Parser::blockStatement() {
+  std::vector<std::unique_ptr<Statement>> statements{};
+
+  while (!expect(TokenKind::RIGHT_BRACE) && !isEOF()) {
+    statements.push_back(declaration());
+  }
+
+  throwOrAdvanceIfExpect(TokenKind::RIGHT_BRACE, "Expected '}' after block");
+  return std::make_unique<BlockStatement>(std::move(statements));
 }
 
 std::unique_ptr<Statement> Parser::declaration() {

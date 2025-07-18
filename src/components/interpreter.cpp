@@ -13,10 +13,13 @@
 #include "models/statement.h"
 #include "models/token.h"
 #include "models/unary_expr.h"
-#include <format>
+#include "models/variable_expr.h"
+#include "symbol_table.h"
 #include <iostream>
 #include <memory>
 #include <variant>
+
+Interpreter::Interpreter() { symbolTable = std::make_unique<SymbolTable>(); }
 
 template <typename T> bool Interpreter::is(LoxValue value) {
   return std::holds_alternative<T>(value);
@@ -169,13 +172,7 @@ LoxValue Interpreter::visit(const BinaryExpr &expr) {
 }
 
 LoxValue Interpreter::visit(const VariableExpr &expr) {
-  std::string varName = std::get<std::string>(expr.name.literal);
-
-  if (symbolTable.contains(varName)) {
-    return symbolTable[varName];
-  }
-
-  throw RuntimeException(expr.name, "Undefined variable '" + varName + "'.");
+  return symbolTable->getValue(expr.name);
 }
 
 void Interpreter::visit(const ExprStatement &statement) {
@@ -189,24 +186,30 @@ void Interpreter::visit(const PrintStatement &statement) {
 
 void Interpreter::visit(const VarStatement &statement) {
   LoxValue value{std::monostate()};
-  std::string varName = std::get<std::string>(statement.name.literal);
 
   if (statement.initializer != nullptr) {
     value = evaluate(*statement.initializer.get());
   }
 
-  symbolTable.insert_or_assign(varName, value);
+  symbolTable->define(statement.name, value);
+}
+
+void Interpreter::visit(const BlockStatement &statement) {
+  symbolTable = std::make_unique<SymbolTable>(std::move(symbolTable));
+
+  try {
+    for (const auto &stmt : statement.statements) {
+      execute(*stmt.get());
+    }
+  } catch (RuntimeException e) {
+    error::reportRuntimeError(e);
+  }
+
+  symbolTable = symbolTable->getParent();
 }
 
 LoxValue Interpreter::visit(const AssignmentExpr &expr) {
   auto value = evaluate(*expr.value);
-  std::string varName = std::get<std::string>(expr.name.literal);
-
-  if (!symbolTable.contains(varName)) {
-    throw RuntimeException(expr.name,
-                           std::format("Undefined variable '{}'", varName));
-  }
-
-  symbolTable.insert_or_assign(varName, value);
+  symbolTable->assign(expr.name, value);
   return value;
 }
