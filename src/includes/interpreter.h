@@ -34,6 +34,7 @@ private:
   void visit(const PrintStatement &statement) override;
   void visit(const VarStatement &statement) override;
   void visit(const BlockStatement &statement) override;
+  void visit(const IfStatement &statement) override;
 
   std::unique_ptr<SymbolTable> symbolTable;
 };

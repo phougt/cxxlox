@@ -6,6 +6,7 @@
 #include "models/binary_expr.h"
 #include "models/block_statement.h"
 #include "models/expr_statement.h"
+#include "models/if_statement.h"
 #include "models/literal_expr.h"
 #include "models/print_statement.h"
 #include "models/statement.h"
@@ -192,6 +193,8 @@ std::unique_ptr<Statement> Parser::statement() {
     return printStatement();
   } else if (advanceIfExpect(TokenKind::LEFT_BRACE)) {
     return blockStatement();
+  } else if (advanceIfExpect(TokenKind::IF)) {
+    return ifStatement();
   } else {
     return exprStatement();
   }
@@ -218,6 +221,25 @@ std::unique_ptr<Statement> Parser::blockStatement() {
 
   throwOrAdvanceIfExpect(TokenKind::RIGHT_BRACE, "Expected '}' after block");
   return std::make_unique<BlockStatement>(std::move(statements));
+}
+
+std::unique_ptr<Statement> Parser::ifStatement() {
+  std::unique_ptr<Statement> thenStatement{};
+  std::unique_ptr<Statement> elseStatement{nullptr};
+  std::unique_ptr<Expr> condition{};
+
+  throwOrAdvanceIfExpect(TokenKind::LEFT_PAREN, "Expected '(' after if");
+  condition = expression();
+  throwOrAdvanceIfExpect(TokenKind::RIGHT_PAREN,
+                         "Expected ')' after expression");
+  thenStatement = statement();
+
+  if (advanceIfExpect(TokenKind::ELSE)) {
+    elseStatement = statement();
+  }
+
+  return std::make_unique<IfStatement>(
+      std::move(condition), std::move(thenStatement), std::move(elseStatement));
 }
 
 std::unique_ptr<Statement> Parser::declaration() {

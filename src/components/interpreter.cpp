@@ -8,6 +8,7 @@
 #include "models/binary_expr.h"
 #include "models/expr_statement.h"
 #include "models/grouping_expr.h"
+#include "models/if_statement.h"
 #include "models/literal_expr.h"
 #include "models/print_statement.h"
 #include "models/statement.h"
@@ -17,6 +18,7 @@
 #include "symbol_table.h"
 #include <iostream>
 #include <memory>
+#include <random>
 #include <variant>
 
 Interpreter::Interpreter() { symbolTable = std::make_unique<SymbolTable>(); }
@@ -206,6 +208,14 @@ void Interpreter::visit(const BlockStatement &statement) {
   }
 
   symbolTable = symbolTable->getParent();
+}
+
+void Interpreter::visit(const IfStatement &statement) {
+  if (isTruthy(evaluate(*statement.condition.get()))) {
+    execute(*statement.thenStatement.get());
+  } else if (statement.elseStatement != nullptr) {
+    execute(*statement.elseStatement.get());
+  }
 }
 
 LoxValue Interpreter::visit(const AssignmentExpr &expr) {

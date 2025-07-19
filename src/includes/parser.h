@@ -26,6 +26,7 @@ private:
   std::unique_ptr<Statement> declaration();
   std::unique_ptr<Statement> varDeclaration();
   std::unique_ptr<Statement> statement();
+  std::unique_ptr<Statement> ifStatement();
   std::unique_ptr<Statement> exprStatement();
   std::unique_ptr<Statement> printStatement();
   std::unique_ptr<Statement> blockStatement();
