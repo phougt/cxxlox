@@ -14,6 +14,7 @@
 #include "models/unary_expr.h"
 #include "models/var_statement.h"
 #include "models/variable_expr.h"
+#include "models/while_statement.h"
 #include <memory>
 
 Parser::Parser() {}
@@ -222,6 +223,8 @@ std::unique_ptr<Statement> Parser::statement() {
     return blockStatement();
   } else if (advanceIfExpect(TokenKind::IF)) {
     return ifStatement();
+  } else if (advanceIfExpect(TokenKind::WHILE)) {
+    return whileStatement();
   } else {
     return exprStatement();
   }
@@ -267,6 +270,18 @@ std::unique_ptr<Statement> Parser::ifStatement() {
 
   return std::make_unique<IfStatement>(
       std::move(condition), std::move(thenStatement), std::move(elseStatement));
+}
+
+std::unique_ptr<Statement> Parser::whileStatement() {
+  throwOrAdvanceIfExpect(TokenKind::LEFT_PAREN,
+                         "Expected '(' after while keyword");
+  std::unique_ptr<Expr> condition{expression()};
+  throwOrAdvanceIfExpect(TokenKind::RIGHT_PAREN,
+                         "Expected ')' after condition");
+  std::unique_ptr<Statement> stmt{statement()};
+
+  return std::make_unique<WhileStatement>(std::move(condition),
+                                          std::move(stmt));
 }
 
 std::unique_ptr<Statement> Parser::declaration() {

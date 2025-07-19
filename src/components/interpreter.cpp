@@ -16,10 +16,10 @@
 #include "models/token.h"
 #include "models/unary_expr.h"
 #include "models/variable_expr.h"
+#include "models/while_statement.h"
 #include "symbol_table.h"
 #include <iostream>
 #include <memory>
-#include <random>
 #include <variant>
 
 Interpreter::Interpreter() { symbolTable = std::make_unique<SymbolTable>(); }
@@ -233,6 +233,12 @@ void Interpreter::visit(const IfStatement &statement) {
     execute(*statement.thenStatement.get());
   } else if (statement.elseStatement != nullptr) {
     execute(*statement.elseStatement.get());
+  }
+}
+
+void Interpreter::visit(const WhileStatement &statement) {
+  while (isTruthy(evaluate(*statement.condition.get()))) {
+    execute(*statement.statement.get());
   }
 }
 
