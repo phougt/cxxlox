@@ -7,6 +7,7 @@ class LiteralExpr;
 class GroupingExpr;
 class VariableExpr;
 class AssignmentExpr;
+class LogicalExpr;
 
 class IExprVisitor {
 public:
@@ -16,4 +17,5 @@ public:
   virtual LoxValue visit(const GroupingExpr &expr) = 0;
   virtual LoxValue visit(const VariableExpr &expr) = 0;
   virtual LoxValue visit(const AssignmentExpr &expr) = 0;
+  virtual LoxValue visit(const LogicalExpr &expr) = 0;
 };

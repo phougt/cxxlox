@@ -30,6 +30,7 @@ private:
   LoxValue visit(const GroupingExpr &expr) override;
   LoxValue visit(const VariableExpr &expr) override;
   LoxValue visit(const AssignmentExpr &expr) override;
+  LoxValue visit(const LogicalExpr &expr) override;
   void visit(const ExprStatement &statement) override;
   void visit(const PrintStatement &statement) override;
   void visit(const VarStatement &statement) override;

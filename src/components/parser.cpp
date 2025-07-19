@@ -8,6 +8,7 @@
 #include "models/expr_statement.h"
 #include "models/if_statement.h"
 #include "models/literal_expr.h"
+#include "models/logical_expr.h"
 #include "models/print_statement.h"
 #include "models/statement.h"
 #include "models/unary_expr.h"
@@ -95,9 +96,35 @@ std::unique_ptr<Expr> Parser::equality() {
   return tempExpr;
 }
 
+std::unique_ptr<Expr> Parser::logicalOr() {
+  auto leftExpr{logicalAnd()};
+
+  if (expect(TokenKind::OR)) {
+    Token op{advance()};
+    auto rightExpr{logicalAnd()};
+    return std::make_unique<LogicalExpr>(op, std::move(leftExpr),
+                                         std::move(rightExpr));
+  }
+
+  return leftExpr;
+}
+
+std::unique_ptr<Expr> Parser::logicalAnd() {
+  auto leftExpr{equality()};
+
+  if (expect(TokenKind::AND)) {
+    Token op{advance()};
+    auto rightExpr{equality()};
+    return std::make_unique<LogicalExpr>(op, std::move(leftExpr),
+                                         std::move(rightExpr));
+  }
+
+  return leftExpr;
+}
+
 std::unique_ptr<Expr> Parser::assignment() {
   const Token &tempToken = peek();
-  auto tempExpr{equality()};
+  auto tempExpr{logicalOr()};
 
   if (advanceIfExpect(TokenKind::EQUAL)) {
     auto rightHandSideExpr{assignment()};

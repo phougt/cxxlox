@@ -10,6 +10,7 @@
 #include "models/grouping_expr.h"
 #include "models/if_statement.h"
 #include "models/literal_expr.h"
+#include "models/logical_expr.h"
 #include "models/print_statement.h"
 #include "models/statement.h"
 #include "models/token.h"
@@ -175,6 +176,23 @@ LoxValue Interpreter::visit(const BinaryExpr &expr) {
 
 LoxValue Interpreter::visit(const VariableExpr &expr) {
   return symbolTable->getValue(expr.name);
+}
+
+LoxValue Interpreter::visit(const LogicalExpr &expr) {
+  LoxValue left = evaluate(*expr.left.get());
+  LoxValue right = evaluate(*expr.right.get());
+
+  if (expr.op.kind == TokenKind::AND) {
+    if (!isTruthy(left)) {
+      return left;
+    }
+  } else {
+    if (isTruthy(left)) {
+      return left;
+    }
+  }
+
+  return right;
 }
 
 void Interpreter::visit(const ExprStatement &statement) {
