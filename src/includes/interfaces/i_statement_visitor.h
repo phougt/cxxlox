@@ -6,6 +6,7 @@ class VarStatement;
 class BlockStatement;
 class IfStatement;
 class WhileStatement;
+class ForStatement;
 
 class IStatementVisitor {
 public:
@@ -15,4 +16,5 @@ public:
   virtual void visit(const BlockStatement &statement) = 0;
   virtual void visit(const IfStatement &statement) = 0;
   virtual void visit(const WhileStatement &statement) = 0;
+  virtual void visit(const ForStatement &statement) = 0;
 };

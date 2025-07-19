@@ -1,4 +1,5 @@
 #include "parser.h"
+#include "common.h"
 #include "enums/token_kind.h"
 #include "exceptions/parser_exception.h"
 #include "helper.h"
@@ -6,11 +7,13 @@
 #include "models/binary_expr.h"
 #include "models/block_statement.h"
 #include "models/expr_statement.h"
+#include "models/for_statement.h"
 #include "models/if_statement.h"
 #include "models/literal_expr.h"
 #include "models/logical_expr.h"
 #include "models/print_statement.h"
 #include "models/statement.h"
+#include "models/token.h"
 #include "models/unary_expr.h"
 #include "models/var_statement.h"
 #include "models/variable_expr.h"
@@ -225,6 +228,8 @@ std::unique_ptr<Statement> Parser::statement() {
     return ifStatement();
   } else if (advanceIfExpect(TokenKind::WHILE)) {
     return whileStatement();
+  } else if (advanceIfExpect(TokenKind::FOR)) {
+    return forStatement();
   } else {
     return exprStatement();
   }
@@ -282,6 +287,44 @@ std::unique_ptr<Statement> Parser::whileStatement() {
 
   return std::make_unique<WhileStatement>(std::move(condition),
                                           std::move(stmt));
+}
+
+std::unique_ptr<Statement> Parser::forStatement() {
+  throwOrAdvanceIfExpect(TokenKind::LEFT_PAREN,
+                         "Expected '(' after for keyword");
+  std::unique_ptr<Statement> initialization{};
+
+  if (advanceIfExpect(TokenKind::VAR)) {
+    initialization = varDeclaration();
+  } else {
+    initialization = exprStatement();
+  }
+
+  // if the 'condition' is omitted by the programmer, we stuff a token of kind
+  // TokenKind::TRUE into a literal expr, so that the for-loop run forever.
+
+  // This behaviour is defined by the book author.
+  std::unique_ptr<Expr> condition{
+      std::make_unique<LiteralExpr>(Token(TokenKind::TRUE))};
+
+  if (!expect(TokenKind::SEMICOLON)) {
+    condition = expression();
+  }
+
+  throwOrAdvanceIfExpect(TokenKind::SEMICOLON, "Expected ';' after condition");
+  std::unique_ptr<Expr> update{std::make_unique<LiteralExpr>(
+      Token(TokenKind::EOF_TOKEN, std::monostate(), 0))};
+
+  if (!expect(TokenKind::RIGHT_PAREN)) {
+    update = expression();
+  }
+
+  throwOrAdvanceIfExpect(TokenKind::RIGHT_PAREN, "Expected ')' after update");
+  std::unique_ptr<Statement> body{statement()};
+
+  return std::make_unique<ForStatement>(std::move(initialization),
+                                        std::move(condition), std::move(update),
+                                        std::move(body));
 }
 
 std::unique_ptr<Statement> Parser::declaration() {

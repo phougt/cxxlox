@@ -7,6 +7,7 @@
 #include "interfaces/i_statement_visitor.h"
 #include "models/binary_expr.h"
 #include "models/expr_statement.h"
+#include "models/for_statement.h"
 #include "models/grouping_expr.h"
 #include "models/if_statement.h"
 #include "models/literal_expr.h"
@@ -241,6 +242,16 @@ void Interpreter::visit(const WhileStatement &statement) {
     execute(*statement.statement.get());
   }
 }
+
+void Interpreter::visit(const ForStatement &statement) {
+  symbolTable = std::make_unique<SymbolTable>(std::move(symbolTable));
+  for (execute(*statement.initialization.get());
+       isTruthy(evaluate(*statement.condition.get()));
+       evaluate(*statement.update.get())) {
+    execute(*statement.body.get());
+  }
+  symbolTable = symbolTable->getParent();
+};
 
 LoxValue Interpreter::visit(const AssignmentExpr &expr) {
   auto value = evaluate(*expr.value);
